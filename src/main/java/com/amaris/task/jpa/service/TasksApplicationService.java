@@ -89,9 +89,5 @@ public class TasksApplicationService {
     public Optional<Task> getTaskById(Long id) {
         return taskRepository.findById(id);
     }
-
-    public ModelMapper getModelMapper() {
-        return modelMapper;
-    }
 }
 
