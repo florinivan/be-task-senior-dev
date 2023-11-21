@@ -1,5 +1,18 @@
 -- This is where your DML goes
-create table remove_this(
-	id int not null auto_increment primary key,
-	name varchar(20)
+--CREATE DATABASE IF NOT EXISTS 'jdbc:h2:./tasksdb';
+
+-- Connect to the tasksdb database
+-- CONNECT 'jdbc:h2:./tasksdb';
+
+CREATE TABLE IF NOT EXISTS EMPLOYEE (
+    ID INT PRIMARY KEY,
+    NAME VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS TASK (
+    ID INT PRIMARY KEY,
+    DESCRIPTION VARCHAR(255) NOT NULL,
+    DUE_DATE DATE,
+    EMPLOYEE_ID INT,
+    FOREIGN KEY (EMPLOYEE_ID) REFERENCES EMPLOYEE(ID)
 );
