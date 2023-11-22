@@ -44,7 +44,7 @@ public class TasksApplicationController {
     }
 
     @PatchMapping("/tasks/update/{id}")
-    public ResponseEntity<Task> patchUser(@PathVariable Long id, @RequestBody TaskDTO taskUpdates) {
+    public ResponseEntity<Task> patchTask(@PathVariable Long id, @RequestBody TaskDTO taskUpdates) {
         Optional<Task> optionalTask = taskApplicationService.getTaskById(id);
         if (optionalTask.isEmpty()) {
             return ResponseEntity.notFound().build();
