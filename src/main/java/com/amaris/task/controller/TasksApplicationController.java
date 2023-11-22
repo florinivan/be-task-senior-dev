@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/")
+@CrossOrigin(origins = "http://localhost:3000")
 public class TasksApplicationController {
 
     private final TasksApplicationService taskApplicationService;
