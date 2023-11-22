@@ -66,6 +66,9 @@ public class TasksApplicationService {
 
     public Task updateTask(Task task, TaskDTO taskUpdates) {
         modelMapper.map(taskUpdates, task);
+        if(taskUpdates.getAssignee() == null){
+            task.setAssignee(null);
+        }
         return createTask(task);
     }
 
