@@ -44,6 +44,7 @@ public class TasksApplicationController {
         return ResponseEntity.ok(optionalTask.get());
     }
 
+    @CrossOrigin(origins = "http://localhost:3000") // Allow requests from this origin
     @PatchMapping("/tasks/update/{id}")
     public ResponseEntity<Task> patchTask(@PathVariable Long id, @RequestBody TaskDTO taskUpdates) {
         Optional<Task> optionalTask = taskApplicationService.getTaskById(id);

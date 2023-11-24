@@ -5,7 +5,6 @@ import com.amaris.task.jpa.entity.Employee;
 import com.amaris.task.jpa.entity.Task;
 import com.amaris.task.jpa.repository.EmployeeRepository;
 import com.amaris.task.jpa.repository.TaskRepository;
-import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,44 +28,31 @@ public class TasksApplicationService {
         this.employeeRepository = employeeRepository;
         this.taskRepository = taskRepository;
         this.modelMapper = modelMapper;
-
-        modelMapper.addConverter(new AbstractConverter<String, Date>() {
-            @Override
-            protected Date convert(String source) {
-                if(source == null){
-                    return null;
-                }
-                try {
-                    java.util.Date date = new SimpleDateFormat("yyyy-MM-dd").parse(source);
-                    return new Date(date.getTime());
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
-                }
+        modelMapper.addConverter(source -> {
+            if (source.getSource() == null) {
+                return null;
             }
-        });
-        modelMapper.addConverter(new AbstractConverter<Long, Employee>() {
-            @Override
-            protected Employee convert(Long source) {
-                if(source == null){
-                    return null;
-                }
-                try {
-                    Optional<Employee> optionalEmployee = employeeRepository.findById(source);
-                    if(optionalEmployee.isEmpty()){
-                        String notFound = String.format("Employee not found with id %s",source);
-                        throw new ParseException(notFound, 1);
-                    }
-                    return optionalEmployee.get();
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
-                }
+            try {
+                return new Date(new SimpleDateFormat("yyyy-MM-dd").parse(source.getSource()).getTime());
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
             }
-        });
+        }, String.class, Date.class);
+        modelMapper.addConverter((source) -> {
+            if (source.getSource() == null) {
+                return null;
+            }
+            Optional<Employee> optionalEmployee = employeeRepository.findById(source.getSource());
+            return optionalEmployee.orElseThrow(() -> {
+                String notFound = String.format("Employee not found with id %s", source.getSource());
+                return new RuntimeException(new ParseException(notFound, 1));
+            });
+        }, Long.class, Employee.class);
     }
 
     public Task updateTask(Task task, TaskDTO taskUpdates) {
         modelMapper.map(taskUpdates, task);
-        if(taskUpdates.getAssignee() == null){
+        if(taskUpdates.getAssignee() == null && taskUpdates.getDueDate() == null){
             task.setAssignee(null);
         }
         return createTask(task);
